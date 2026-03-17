@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && request.auth.token.role == "admin"; }
+
+    function nonEmpty(s) { return s is string && s.size() > 0; }
+    function maxLen(s, n) { return s is string && s.size() <= n; }
+    function nonEmptyMax(s, n) { return nonEmpty(s) && maxLen(s, n); }
+
+    function isNonNegativeNumber(n) { return n is number && n >= 0 && n <= 1000000000; }
+    function isBool(b) { return b is bool; }
+
+    function listOfStringsOrEmpty(list, maxItems, maxLenEach) {
+      return list == null || (
+        list is list &&
+        list.size() <= maxItems &&
+        list.where(x, x is string && x.size() > 0 && x.size() <= maxLenEach).size() == list.size()
+      );
+    }
+
+    function isValidProduct(d) {
+      return
+        nonEmptyMax(d.name, 120) &&
+        nonEmptyMax(d.type, 50) &&
+        nonEmptyMax(d.description, 5000) &&
+        nonEmptyMax(d.dose, 2000) &&
+        nonEmptyMax(d.packaging, 120) &&
+        isNonNegativeNumber(d.price) &&
+        isBool(d.published) &&
+
+        listOfStringsOrEmpty(d.crops, 50, 40) &&
+        listOfStringsOrEmpty(d.activeSubstances, 50, 60) &&
+
+        (d.strengths == null || maxLen(d.strengths, 2000)) &&
+        (d.logoUrl == null || maxLen(d.logoUrl, 500)) &&
+        (d.photoUrl == null || maxLen(d.photoUrl, 500)) &&
+        (d.pdfEtiquetteUrl == null || maxLen(d.pdfEtiquetteUrl, 500)) &&
+        (d.pdfFdsUrl == null || maxLen(d.pdfFdsUrl, 500));
+    }
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidProduct(request.resource.data);
+      allow delete: if isAdmin();
+    }
+  }
+}
