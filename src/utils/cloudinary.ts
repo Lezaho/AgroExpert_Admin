@@ -1,6 +1,5 @@
-export async function uploadToCloudinary(file: File, p0: string) {
+export async function uploadToCloudinary(file: File) {
 
-  const cloudName = import.meta.env.VITE_CLOUD_NAME;
   const preset = import.meta.env.VITE_CLOUDINARY_PRESET;
 
   const formData = new FormData();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { db } from "../../firebase/firebase.ts";
-import { collection, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { User, ShieldCheck, UserMinus, Trash2, Mail } from "lucide-react";
+import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
+import { ShieldCheck, UserMinus, Mail } from "lucide-react";
 
 export default function UsersList() {
   const [users, setUsers] = useState<any[]>([]);

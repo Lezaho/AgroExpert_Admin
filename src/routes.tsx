@@ -65,7 +65,7 @@ const router = createBrowserRouter([
       { path: "stock", element: <InventoryManagement /> },
       
       { path: "stock/list", element: <InventoryManagement /> }, // La liste et l'ajout (votre formulaire)
-      { path: "stock/movements", element: <StockMovements /> }, // Entrées et Sorties 
+      
 
       // Module Pathologies (Maladies)
       {
