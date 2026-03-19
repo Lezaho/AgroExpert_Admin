@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { db } from "../../firebase/firebase.ts";
 import { collection, getDocs, deleteDoc, doc, query, orderBy } from "firebase/firestore";
-import { Plus, Calendar, Trash2, Edit, Eye } from "lucide-react";
+import { Plus, Calendar, Trash2, Edit } from "lucide-react";
 import NewsForm from "./NewsForm";
 
 export default function NewsList() {

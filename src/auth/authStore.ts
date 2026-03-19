@@ -57,7 +57,7 @@ export const useAuth = create<AuthState>((set) => {
       await signOut(auth);
     },
 
-    resetPassword: async (email: string) => {
+    resetPassword: async () => {
       // Optionnel : envoyer un email de reset avec sendPasswordResetEmail si nécessaire
       // import { sendPasswordResetEmail } from "firebase/auth";
       // await sendPasswordResetEmail(auth, email);

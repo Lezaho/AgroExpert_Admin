@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebase/firebase.ts";
 import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { Edit2, Trash2, Plus, Search, Loader2, ChevronRight } from "lucide-react"; // Optionnel: icônes lucide-react
+import { Plus, Search, ChevronRight } from "lucide-react"; // Optionnel: icônes lucide-react
 import DiseaseForm from "./DiseaseForm";
 
 // Typage pour la sécurité du code
