@@ -12,35 +12,45 @@ type Props = {
 };
 
 // 1. LISTE OFFICIELLE DES FAMILLES
-const TYPES: ProductType[] = [
-  "Herbicide", "Fongicide", "Insecticide", "Bioinsecticide", "Biofongicide",
-  "Biostimulant", "Nématicide", "biocontroles", "Engrais", "Adjuvant", 
-  "Absorbant", "Appareils", "Equipement de protection", "Hygine publique", 
-  "Irrigation", "Molusicide", "Outils", "Pheromones", "Raticides", "Semences"
-].sort();
+
+const TYPES: readonly ProductType[] = [
+  "Herbicide",
+  "Fongicide",
+  "Insecticide",
+  "Bio-insecticide",
+  "Biostimulant",
+  "Adjuvant",
+] as const;
+
 
 const CULTURES = [
   "Cacao", "Tomate", "Riz", "Oignon", "Maïs", "Aubergine", "Banane", 
   "Piment", "Carote", "Concombre", "Courgette", "Gazon", "Gombo", "Haricot", "Poivron"
 ].sort();
 
+
+
+
 type ProductDraft = Omit<Product, "id">;
 
 const EMPTY: ProductDraft = {
   name: "",
-  type: "Herbicide",
+  type: "Herbicide", // valeur valide au lieu de "famille"
   description: "",
   dose: "",
   strengths: "",
   packaging: "",
   price: 0,
-  published: true, 
+  published: true,
   crops: [],
   activeSubstances: [],
   logoUrl: "",
-  photoUrl: "", // Photo du produit réel
+  photoUrl: "",
   pdfEtiquetteUrl: "",
+  stock_quantity: 0,
+  unit: "",
 };
+
 
 export default function ProductForm({ open, onClose, productId, onSaved }: Props) {
   const isEdit = Boolean(productId);
