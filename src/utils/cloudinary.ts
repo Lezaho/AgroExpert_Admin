@@ -1,4 +1,4 @@
-export async function uploadToCloudinary(file: File) {
+export async function uploadToCloudinary(file: File, _p0: any) {
 
   const preset = import.meta.env.VITE_CLOUDINARY_PRESET;
 
