@@ -20,6 +20,7 @@ import NewsList from "./pages/admin/NewsList";
 
 // AJOUT : Import de la page de gestion de stock
 import InventoryManagement from "./pages/admin/InventoryManagement"; 
+import ItineraryForm from "./pages/admin/ItineraryForm";
 
 /**
  * Composant de secours pour les fonctionnalités secondaires
@@ -53,13 +54,16 @@ const router = createBrowserRouter([
       { path: "dashboard", element: <Dashboard /> },
 
       // Module Produits
-      {
-        path: "products",
-        children: [
-          { index: true, element: <ProductsList /> },
-          { path: ":id", element: <ProductDetail /> },
-        ],
-      },
+      
+        {
+  path: "products",
+  children: [
+    { index: true, element: <ProductsList /> },
+    // ON PLACE LA ROUTE FIXE AVANT LE PARAMÈTRE :ID
+    { path: "itineraries/new", element: <ItineraryForm /> }, 
+    { path: ":id", element: <ProductDetail /> },
+  ],
+},
 
       // Module Gestion de Stock (MISE À JOUR ICI)
       { path: "stock", element: <InventoryManagement /> },
