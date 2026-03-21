@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import type { Product } from "../../types/product";
 import { listProducts, updateProduct } from "../../api/productsApi";
 import ProductForm from "./ProductForm";
-import { Leaf, Calendar, PlusCircle, ArrowRight, Package, Search } from "lucide-react";
+import { Leaf, Calendar, PlusCircle, ArrowRight, Package, Search, Trash2, Edit2 } from "lucide-react";
 import { db } from "../../firebase/firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 
 const FAMILIES = [
   "Absorbant", "Adjuvant", "Appareils", "Biofongicide", "Bioinsecticide",
@@ -41,6 +41,26 @@ export default function ProductsList() {
 
   useEffect(() => { fetchAll(); }, []);
 
+  // --- ACTIONS ITINÉRAIRES ---
+  const handleDeleteItinerary = async (e: React.MouseEvent, id: string, name: string) => {
+    e.stopPropagation();
+    if (window.confirm(`Voulez-vous vraiment supprimer l'itinéraire "${name}" ?`)) {
+      try {
+        await deleteDoc(doc(db, "cropCycles", id));
+        setItineraries(prev => prev.filter(it => it.id !== id));
+      } catch (err) {
+        alert("Erreur lors de la suppression");
+      }
+    }
+  };
+
+  const handleEditItinerary = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    // Redirige vers la page de création mais avec l'ID pour le mode édition
+    navigate(`/admin/products/itineraries/new?edit=${id}`);
+  };
+
+  // --- ACTIONS PRODUITS ---
   const handleUpdateStock = async (e: React.MouseEvent, product: Product) => {
     e.preventDefault(); e.stopPropagation();
     const currentUnit = product.unit || "Pcs";
@@ -150,9 +170,6 @@ export default function ProductsList() {
                 ))}
               </tbody>
            </table>
-           {filteredProducts.length === 0 && (
-               <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>Aucun produit trouvé</div>
-           )}
         </div>
       )}
 
@@ -188,9 +205,29 @@ export default function ProductsList() {
                     <span style={styles.itinMeta}>⏱️ {itin.totalDuration} jours</span>
                   </div>
                 </div>
-                <button style={styles.itinViewBtn} onClick={() => navigate(`/admin/itineraries/${itin.id}`)}>
-                   Détails <ArrowRight size={16} />
-                </button>
+                
+                <div style={styles.itinActions}>
+                  <button 
+                    style={styles.actionBtnEdit} 
+                    onClick={(e) => handleEditItinerary(e, itin.id)}
+                    title="Modifier"
+                  >
+                    <Edit2 size={16} />
+                  </button>
+                  <button 
+                    style={styles.actionBtnDelete} 
+                    onClick={(e) => handleDeleteItinerary(e, itin.id, itin.cultureName)}
+                    title="Supprimer"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                  <button 
+                    style={styles.itinViewBtn} 
+                    onClick={() => navigate(`/admin/products/itineraries/view/${itin.id}`)}
+                  >
+                    Détails <ArrowRight size={16} />
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -209,15 +246,14 @@ const styles: Record<string, React.CSSProperties> = {
   badge: { fontSize: "11px", color: "#0f766e", background: "#ccfbf1", padding: "4px 10px", borderRadius: "20px", fontWeight: '700' },
   stockTag: { padding: "6px 12px", borderRadius: "10px", fontSize: "12px", fontWeight: "800" },
   panel: { padding: "25px", background: "#fff", borderRadius: "20px", border: '1px solid #e2e8f0', boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" },
-  
-  itinGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))", gap: "20px" },
-  itinCard: { 
-    background: "#fff", padding: "20px", borderRadius: "20px", border: "1px solid #f1f5f9", 
-    display: "flex", alignItems: "center", gap: "18px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" 
-  },
+  itinGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: "20px" },
+  itinCard: { background: "#fff", padding: "20px", borderRadius: "20px", border: "1px solid #f1f5f9", display: "flex", alignItems: "center", gap: "18px", boxShadow: "0 2px 4px rgba(0,0,0,0.02)" },
   itinIcon: { width: "54px", height: "54px", background: "#ecfdf5", borderRadius: "15px", display: "grid", placeItems: "center", flexShrink: 0 },
   itinMeta: { fontSize: "13px", color: "#64748b", display: "flex", alignItems: "center", gap: "6px", fontWeight: '500' },
-  itinViewBtn: { background: "none", border: "none", color: "#10b981", fontWeight: "800", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px" },
+  itinActions: { display: "flex", alignItems: "center", gap: "10px" },
+  itinViewBtn: { background: "#f0fdf4", border: "none", color: "#10b981", fontWeight: "800", fontSize: "13px", cursor: "pointer", display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px", borderRadius: "10px" },
+  actionBtnEdit: { background: "#f8fafc", border: "1px solid #e2e8f0", color: "#64748b", padding: "8px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" },
+  actionBtnDelete: { background: "#fff1f1", border: "1px solid #fee2e2", color: "#ef4444", padding: "8px", borderRadius: "10px", cursor: "pointer", display: "flex", alignItems: "center" },
   emptyState: { gridColumn: "1/-1", textAlign: "center", padding: "60px", color: "#94a3b8", border: "2px dashed #e2e8f0", borderRadius: "24px", display: 'flex', flexDirection: 'column', alignItems: 'center' }
 };
 
